@@ -8,11 +8,18 @@ namespace UnitTest.APP
 {
     public class Calculator
     {
-        public int Add(int a , int b)
+        private readonly ICalculatorService _calculatorService;
+        public Calculator(ICalculatorService calculatorService)
         {
-            if(a== 0 || b== 0)
-                return 0; 
-            return a + b;
+            _calculatorService = calculatorService;
+        }
+        public int Add(int a, int b)
+        {
+            return _calculatorService.Add(a, b);
+        }
+        public int Multip(int a, int b)
+        {
+            return _calculatorService.Multip(a, b);
         }
     }
 }

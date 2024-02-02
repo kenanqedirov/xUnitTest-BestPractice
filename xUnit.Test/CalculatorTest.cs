@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,11 @@ namespace xUnit.Test
     public class CalculatorTest
     {
         private Calculator calculator { get; set; }
+        private Mock<ICalculatorService> mymock { get; set; } 
         public CalculatorTest()
         {
-            this.calculator = new Calculator();
+            var mymock = new Mock<ICalculatorService>();
+            this.calculator = new Calculator(mymock.Object);
         }
         //[Fact]
         //public void AddTest()
@@ -65,15 +68,18 @@ namespace xUnit.Test
         //{
         //    var actualTotal = calculator.Add(a, b);
         //    Assert.Equal( expectedTotal, actualTotal);
-        //}
+        //} 
 
         [Theory]
         [InlineData(0, 10, 0)]
-        [InlineData(35, 0, 0)]
+        [InlineData(35, 0, 1)]
         public void Add_SimpleValues_ReturnTotalValue(int a, int b, int expectedTotal)
-        {
+        {          
+            mymock.Setup(x=>x.Add(a, b)).Returns(expectedTotal);
+
             var actualTotal = calculator.Add(a, b);
             Assert.Equal(expectedTotal, actualTotal);
+            mymock.Verify(x=>x.Add(a,b),Times.Once);
         }
 
         [Theory]
@@ -83,6 +89,14 @@ namespace xUnit.Test
         {
             var actualTotal = calculator.Add(a, b);
             Assert.Equal(expectedTotal, actualTotal);
+        }
+
+        [Theory]
+        [InlineData(3,5,15)]
+        public void Multip_SimpleValues_ReturnsMultipleValue(int a, int b , int expectedTotal)
+        {
+            mymock.Setup(x => x.Multip(a, b)).Returns(expectedTotal);
+            Assert.Equal(15, calculator.Multip(a, b));
         }
     }
 } 
